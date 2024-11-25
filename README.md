@@ -58,8 +58,8 @@ This project provides an API to create Google Docs using Google OAuth authentica
 ### **How to Run**
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-repo/google-docs-creator.git
-   cd google-docs-creator
+   git clone https://github.com/moonchitta/docGPT
+   cd docGPT
    ```
 
 2. Place the `client_secret.json` file in the root directory.
