@@ -1,0 +1,112 @@
+openapi: 3.1.0
+info:
+  title: Google Docs Creator
+  description: Integrates with Google Docs API to create documents using ActionsGPT.
+  version: 1.0.0
+
+servers:
+  - url: https://31bc-2407-d000-1a-f25e-a8fc-c648-d43e-cd47.ngrok-free.app
+
+paths:
+  /startAuth:
+    get:
+      summary: Start OAuth flow
+      description: Initiates the Google OAuth flow to authenticate the user.
+      operationId: startAuth
+      responses:
+        '200':
+          description: Returns the authorization URL for user authentication.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth_url:
+                    type: string
+                    description: URL for the user to authenticate.
+
+  /handleAuth:
+    get:
+      summary: Handle OAuth callback
+      description: Handles the redirect from Google OAuth and saves the credentials.
+      operationId: handleAuth
+      responses:
+        '200':
+          description: Confirms successful authentication.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message.
+
+  /createDoc:
+    post:
+      summary: Create a Google Doc
+      description: Creates a Google Doc with the specified title and content.
+      operationId: createDoc
+      security:
+        - googleOAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Title of the Google Doc.
+                content:
+                  type: string
+                  description: Content of the Google Doc.
+              required:
+                - title
+                - content
+      responses:
+        '200':
+          description: Document created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message with the document URL.
+        '400':
+          description: Bad request (missing title or content).
+        '401':
+          description: Unauthorized (user not authenticated).
+        '500':
+          description: Server error.
+  /privacy:
+    get:
+      summary: Privacy Policy
+      description: Returns the privacy policy text for the application.
+      operationId: getPrivacyPolicy
+      responses:
+        '200':
+          description: Returns the privacy policy text.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  privacy_policy:
+                    type: string
+                    description: The privacy policy text.
+
+components:
+  schemas: {}
+  securitySchemes:
+    googleOAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/auth
+          tokenUrl: https://oauth2.googleapis.com/token
+          scopes:
+            https://www.googleapis.com/auth/documents: Create and manage Google Docs
